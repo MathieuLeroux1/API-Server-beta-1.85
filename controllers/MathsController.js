@@ -101,18 +101,29 @@ export default class MathsController extends Controller {
                 break;
         }
 
-        
-        
         if (error || invalidParams.length > 0 || missingParams.length > 0 || extraParams.length > 0) {
             const response = {
                 op,
-                ...(x !== undefined && { x: params.x }),
-                ...(y !== undefined && { y: params.y }),
-                ...(n !== undefined && { n: params.n }),
-                ...invalidParams.reduce((acc, param) => ({ ...acc, [param]: params[param] }), {}),
-                error: error || `Parameter list incorrect`
             };
-        
+            
+            if (x !== undefined) {
+                response.x = params.x;
+            }
+            
+            if (y !== undefined) {
+                response.y = params.y;
+            }
+            
+            if (n !== undefined) {
+                response.n = params.n;
+            }
+            
+            invalidParams.forEach(param => {
+                response[param] = params[param];
+            });
+            
+            response.error = error || 'Parameter list incorrect';
+            
             this.HttpContext.response.badRequest(response);
             return;
         }
@@ -163,12 +174,21 @@ export default class MathsController extends Controller {
 
             const response = {
                 op,
-                ...(x !== undefined && { x: params.x }),
-                ...(y !== undefined && { y: params.y }),
-                ...(n !== undefined && { n: params.n }),
-                value: result
+                value: result 
             };
-
+            
+            if (x !== undefined) {
+                response.x = params.x;
+            }
+            
+            if (y !== undefined) {
+                response.y = params.y;
+            }
+            
+            if (n !== undefined) {
+                response.n = params.n;
+            }
+            
             this.HttpContext.response.JSON(response);
         } catch (error) {
             console.log(error);
