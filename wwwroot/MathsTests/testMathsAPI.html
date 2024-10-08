@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test /api/maths</title>
+
+    <style>
+        body{
+            margin-left: 10px;
+        }
+        fieldset{
+            margin-top: 10px;
+        }
+        legend{
+            font-weight: bold;
+            font-size: large;
+        }
+        button{
+            margin-left: 1px;
+        }
+        input[type=text]{
+            margin-left: 1ch;
+            min-width: 25ch;
+        }
+        #test-results{
+            font-family: monospace;
+            font-weight: bold;
+            font-size: large;
+        }
+    </style>
+</head>
+<body>
+    <h1>Test du service /api/maths</h1>
+    <fieldset>
+        <legend>Url du service</legend>
+        <input type="text" value="http://localhost:5000/api/maths" id="host">
+        <span>/api/maths
+            <button onclick="startTest()">Démarrer le test</button>
+            <button onclick="redirectToHelp()">Aide</button>
+        </span>
+    </fieldset>
+    <fieldset>
+        <legend>Tests</legend>
+        <div id="test-results"></div>
+    </fieldset>
+    <fieldset>
+        <legend>Verdict</legend>
+        <div id="verdict"></div>
+    </fieldset>
+
+
+    <script>
+        let allTestsSuccess = true;
+
+        async function startTest() {
+            const resultDiv = document.getElementById('test-results');
+            const verdictDiv = document.getElementById('verdict');
+            resultDiv.innerHTML = "";
+            verdictDiv.innerHTML = "";
+
+            const host = document.getElementById('host').value;
+            await webAPI_getMaths(host, "?op=+&x=-111&y=-244", showResult)
+            await webAPI_getMaths(host, "?op=-&x=1&y=abc", showResult)
+            await webAPI_getMaths(host, "?n=a&op=p", showResult)
+            await webAPI_getMaths(host, "?op=-&x=111&y=244", showResult)
+            await webAPI_getMaths(host, "?op=*&x=11.56&y=244.12345", showResult)
+            await webAPI_getMaths(host, "?op=/&x=99&y=11.06", showResult)
+            await webAPI_getMaths(host, "?op=/&x=99&y=0", showResult)
+            await webAPI_getMaths(host, "?op=/&x=0&y=0", showResult)
+            await webAPI_getMaths(host, "?op=%&x=5&y=5", showResult)
+            await webAPI_getMaths(host, "?op=%&x=100&y=13", showResult)
+            await webAPI_getMaths(host, "?op=%&x=100&y=0", showResult)
+            await webAPI_getMaths(host, "?op=%&x=0&y=0", showResult)
+            await webAPI_getMaths(host, "?n=0&op=!", showResult)
+            await webAPI_getMaths(host, "?n=0&op=p", showResult)
+            await webAPI_getMaths(host, "?n=1&op=p", showResult)
+            await webAPI_getMaths(host, "?n=2&op=p", showResult)
+            await webAPI_getMaths(host, "?n=5&op=p", showResult)
+            await webAPI_getMaths(host, "?n=6&op=p", showResult)
+            await webAPI_getMaths(host, "?n=6.5&op=p", showResult)
+            await webAPI_getMaths(host, "?n=113&op=p", showResult)
+            await webAPI_getMaths(host, "?n=114&op=p", showResult)
+            await webAPI_getMaths(host, "?n=1&op=np", showResult)
+            await webAPI_getMaths(host, "?n=30&op=np", showResult)
+            await webAPI_getMaths(host, "?X=111&op=+&y=244", showResult)
+            await webAPI_getMaths(host, "?Y=244&op=+&x=244", showResult)
+            await webAPI_getMaths(host, "?op=+&x=111&y=244&z=0", showResult)
+            await webAPI_getMaths(host, "?n=5&op=!&z=0", showResult)
+            await webAPI_getMaths(host, "?n=5.5&op=!", showResult)
+            await webAPI_getMaths(host, "?z=0", showResult)
+            await webAPI_getMaths(host, "?n=-5&op=!", showResult)
+            await webAPI_getMaths(host, "?x=null", showResult)
+
+            if (allTestsSuccess) {
+                verdictDiv.innerHTML = "Bravo!! Aucun problème";
+            } else {
+                verdictDiv.innerHTML = "Des erreurs ont été détectées";
+            }
+        }
+
+        function showResult(result, isSuccess) {
+            const resultDiv = document.getElementById('test-results');
+            if (isSuccess) {
+                resultDiv.innerHTML += `<div class="success">OK ---> ${JSON.stringify(result, null, 2)}</div>`;
+            } else {
+                if(result.responseJSON.error_description.error){
+                    resultDiv.innerHTML += `<div class="error">OK ---> ${JSON.stringify(result.responseJSON.error_description, null, 2)}</div>`;
+                } else{
+                    resultDiv.innerHTML += `<div class="error">Error ---> Unknowed error</div>`;
+                    allTestsSuccess = false;
+                }
+            }
+        }
+        
+
+        async function redirectToHelp() {
+            const host = document.getElementById('host').value;
+            window.location.href = host + "?";
+        }
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.maskedinput/1.4.1/jquery.maskedinput.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+    <script src="js/Maths_API.js"></script>
+</body>
+</html>
