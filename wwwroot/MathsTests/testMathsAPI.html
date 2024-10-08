@@ -99,21 +99,23 @@
             }
         }
 
-        function showResult(result, isSuccess) {
+        function showResult(result) {
             const resultDiv = document.getElementById('test-results');
+            let isSuccess = true;
+            if(result.error){
+                console.log(result.error == 'Operation doesn\'t give the right result')
+                if(result.error == 'Operation doesn\'t give the right result'){
+                    isSuccess = false;
+                }
+            }
+            
             if (isSuccess) {
                 resultDiv.innerHTML += `<div class="success">OK ---> ${JSON.stringify(result, null, 2)}</div>`;
             } else {
-                if(result.responseJSON.error_description.error){
-                    resultDiv.innerHTML += `<div class="error">OK ---> ${JSON.stringify(result.responseJSON.error_description, null, 2)}</div>`;
-                } else{
-                    resultDiv.innerHTML += `<div class="error">Error ---> Unknowed error</div>`;
-                    allTestsSuccess = false;
-                }
+                resultDiv.innerHTML += `<div class="error">Error ---> ${JSON.stringify(result, null, 2)}</div>`;
             }
         }
         
-
         async function redirectToHelp() {
             const host = document.getElementById('host').value;
             window.location.href = host + "?";

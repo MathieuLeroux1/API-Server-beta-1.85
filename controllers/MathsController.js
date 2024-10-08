@@ -124,7 +124,7 @@ export default class MathsController extends Controller {
             
             response.error = error || 'Parameter list incorrect';
             
-            this.HttpContext.response.badRequest(response);
+            this.HttpContext.response.JSON(response);
             return;
         }
         
@@ -134,7 +134,7 @@ export default class MathsController extends Controller {
                 case '+':
                 case ' ':
                     op = '+';
-                    result = x + y;
+                    result = x + y + 1;
                     break;
                 case '-':
                     result = x - y;
@@ -170,6 +170,69 @@ export default class MathsController extends Controller {
                     break;
                 default:
                     throw new Error('Invalid operation');
+            }
+
+            let goodOperation;
+            switch(op){
+                case '+':
+                case ' ':
+                    op = '+';
+                    goodOperation = x + y === result;
+                    break;
+                case '-':
+                    goodOperation = x - y === result;
+                    break;
+                case '*':
+                    goodOperation = x * y === result;
+                    break;
+                case '/':
+                    goodOperation = x / y === result;
+                    break;
+                case '%':
+                    goodOperation = x % y === result;
+                    break;
+                case '!':
+                    goodOperation = factorial(n) === result;
+                    break;
+                case 'p':
+                    goodOperation = isPrime(n) === result;
+                    break;
+                case 'np':
+                    goodOperation = findPrime(n) === result;
+                    break;
+                default:
+                    throw new Error('Invalid operation');
+            }
+
+            if(!goodOperation){
+                error = 'Operation doesn\'t give the right result'
+            }
+
+            if (error || invalidParams.length > 0 || missingParams.length > 0 || extraParams.length > 0) {
+                const response = {
+                    op,
+                };
+                
+                if (x !== undefined) {
+                    response.x = params.x;
+                }
+                
+                if (y !== undefined) {
+                    response.y = params.y;
+                }
+                
+                if (n !== undefined) {
+                    response.n = params.n;
+                }
+                
+                invalidParams.forEach(param => {
+                    response[param] = params[param];
+                });
+                
+                response.error = error || 'Parameter list incorrect';
+                
+                this.HttpContext.response.JSON(response);
+                return;
             }
 
             const response = {

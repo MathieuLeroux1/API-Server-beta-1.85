@@ -4,12 +4,12 @@ async function webAPI_getMaths(host, query, showResult) {
             url: host + query,
             success: (data) => {
                 console.log('Success:', data);
-                showResult(data, true);
+                showResult(data);
                 resolve(data);
             },
             error: (xhr) => {
                 console.log('Error:', xhr);
-                showResult(xhr, false);
+                showResult(xhr);
                 resolve(null);
             }
         });
