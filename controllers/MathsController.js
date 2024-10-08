@@ -134,7 +134,7 @@ export default class MathsController extends Controller {
                 case '+':
                 case ' ':
                     op = '+';
-                    result = x + y + 1;
+                    result = x + y;
                     break;
                 case '-':
                     result = x - y;
